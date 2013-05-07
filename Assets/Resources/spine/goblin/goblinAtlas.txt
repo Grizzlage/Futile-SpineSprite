@@ -1,0 +1,332 @@
+{"frames": {
+
+"goblin/head.png":
+{
+	"frame": {"x":59,"y":83,"w":103,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":103,"h":64},
+	"sourceSize": {"w":103,"h":66}
+},
+"goblin/left-arm.png":
+{
+	"frame": {"x":64,"y":337,"w":37,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":37,"h":35},
+	"sourceSize": {"w":37,"h":35}
+},
+"goblin/left-foot.png":
+{
+	"frame": {"x":163,"y":207,"w":65,"h":31},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":31},
+	"sourceSize": {"w":65,"h":31}
+},
+"goblin/left-hand.png":
+{
+	"frame": {"x":159,"y":446,"w":36,"h":41},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":41},
+	"sourceSize": {"w":36,"h":41}
+},
+"goblin/left-lower-leg.png":
+{
+	"frame": {"x":26,"y":74,"w":31,"h":70},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":31,"h":70},
+	"sourceSize": {"w":33,"h":70}
+},
+"goblin/left-shoulder.png":
+{
+	"frame": {"x":26,"y":146,"w":29,"h":44},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":29,"h":44},
+	"sourceSize": {"w":29,"h":44}
+},
+"goblin/left-upper-leg.png":
+{
+	"frame": {"x":68,"y":374,"w":33,"h":73},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":73},
+	"sourceSize": {"w":33,"h":73}
+},
+"goblin/neck.png":
+{
+	"frame": {"x":141,"y":403,"w":36,"h":41},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":41},
+	"sourceSize": {"w":36,"h":41}
+},
+"goblin/pelvis.png":
+{
+	"frame": {"x":55,"y":247,"w":62,"h":43},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":62,"h":43},
+	"sourceSize": {"w":62,"h":43}
+},
+"goblin/right-arm.png":
+{
+	"frame": {"x":30,"y":240,"w":23,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":50},
+	"sourceSize": {"w":23,"h":50}
+},
+"goblin/right-foot.png":
+{
+	"frame": {"x":160,"y":275,"w":63,"h":33},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":63,"h":33},
+	"sourceSize": {"w":63,"h":33}
+},
+"goblin/right-hand.png":
+{
+	"frame": {"x":103,"y":410,"w":36,"h":37},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":37},
+	"sourceSize": {"w":36,"h":37}
+},
+"goblin/right-lower-leg.png":
+{
+	"frame": {"x":30,"y":374,"w":36,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":76},
+	"sourceSize": {"w":36,"h":76}
+},
+"goblin/right-shoulder.png":
+{
+	"frame": {"x":64,"y":292,"w":39,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":39,"h":43},
+	"sourceSize": {"w":39,"h":45}
+},
+"goblin/right-upper-leg.png":
+{
+	"frame": {"x":138,"y":338,"w":34,"h":63},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":63},
+	"sourceSize": {"w":34,"h":63}
+},
+"goblin/shield.png":
+{
+	"frame": {"x":164,"y":2,"w":70,"h":72},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":72},
+	"sourceSize": {"w":70,"h":72}
+},
+"goblin/spear.png":
+{
+	"frame": {"x":2,"y":2,"w":22,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":368},
+	"sourceSize": {"w":22,"h":368}
+},
+"goblin/torso.png":
+{
+	"frame": {"x":164,"y":76,"w":68,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":68,"h":96},
+	"sourceSize": {"w":68,"h":96}
+},
+"goblin/undie-straps.png":
+{
+	"frame": {"x":30,"y":452,"w":55,"h":19},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":55,"h":19},
+	"sourceSize": {"w":55,"h":19}
+},
+"goblin/undies.png":
+{
+	"frame": {"x":209,"y":341,"w":36,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":29},
+	"sourceSize": {"w":36,"h":29}
+},
+"goblingirl/dagger-tip.png":
+{
+	"frame": {"x":236,"y":2,"w":17,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+},
+"goblingirl/dagger.png":
+{
+	"frame": {"x":2,"y":372,"w":26,"h":108},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":26,"h":108},
+	"sourceSize": {"w":26,"h":108}
+},
+"goblingirl/head.png":
+{
+	"frame": {"x":59,"y":2,"w":103,"h":79},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":103,"h":79},
+	"sourceSize": {"w":103,"h":81}
+},
+"goblingirl/left-arm.png":
+{
+	"frame": {"x":105,"y":301,"w":37,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":37,"h":35},
+	"sourceSize": {"w":37,"h":35}
+},
+"goblingirl/left-foot.png":
+{
+	"frame": {"x":164,"y":174,"w":65,"h":31},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":31},
+	"sourceSize": {"w":65,"h":31}
+},
+"goblingirl/left-hand.png":
+{
+	"frame": {"x":127,"y":149,"w":35,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":40},
+	"sourceSize": {"w":35,"h":40}
+},
+"goblingirl/left-lower-leg.png":
+{
+	"frame": {"x":26,"y":2,"w":31,"h":70},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":31,"h":70},
+	"sourceSize": {"w":33,"h":70}
+},
+"goblingirl/left-shoulder.png":
+{
+	"frame": {"x":26,"y":192,"w":28,"h":46},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":46},
+	"sourceSize": {"w":28,"h":46}
+},
+"goblingirl/left-upper-leg.png":
+{
+	"frame": {"x":103,"y":338,"w":33,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":70},
+	"sourceSize": {"w":33,"h":70}
+},
+"goblingirl/neck.png":
+{
+	"frame": {"x":174,"y":341,"w":33,"h":41},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":41},
+	"sourceSize": {"w":35,"h":41}
+},
+"goblingirl/pelvis.png":
+{
+	"frame": {"x":97,"y":449,"w":60,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":43},
+	"sourceSize": {"w":62,"h":43}
+},
+"goblingirl/right-arm.png":
+{
+	"frame": {"x":231,"y":174,"w":22,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":22,"h":50},
+	"sourceSize": {"w":28,"h":50}
+},
+"goblingirl/right-foot.png":
+{
+	"frame": {"x":163,"y":240,"w":63,"h":33},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":63,"h":33},
+	"sourceSize": {"w":63,"h":33}
+},
+"goblingirl/right-hand.png":
+{
+	"frame": {"x":59,"y":473,"w":36,"h":37},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":37},
+	"sourceSize": {"w":36,"h":37}
+},
+"goblingirl/right-lower-leg.png":
+{
+	"frame": {"x":26,"y":292,"w":36,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":76},
+	"sourceSize": {"w":36,"h":76}
+},
+"goblingirl/right-shoulder.png":
+{
+	"frame": {"x":119,"y":256,"w":39,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":39,"h":43},
+	"sourceSize": {"w":39,"h":45}
+},
+"goblingirl/right-upper-leg.png":
+{
+	"frame": {"x":127,"y":191,"w":34,"h":63},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":63},
+	"sourceSize": {"w":34,"h":63}
+},
+"goblingirl/torso.png":
+{
+	"frame": {"x":59,"y":149,"w":66,"h":96},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":96},
+	"sourceSize": {"w":68,"h":96}
+},
+"goblingirl/undie-straps.png":
+{
+	"frame": {"x":2,"y":482,"w":55,"h":19},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":55,"h":19},
+	"sourceSize": {"w":55,"h":19}
+},
+"goblingirl/undies.png":
+{
+	"frame": {"x":197,"y":310,"w":36,"h":29},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":29},
+	"sourceSize": {"w":36,"h":29}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "goblinAtlas.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:7e1435f77052b2933c9247babf475f68$"
+}
+}
