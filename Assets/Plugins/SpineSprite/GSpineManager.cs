@@ -18,14 +18,17 @@ public class GSpineManager {
 	// this actually loads the spine json file into a skeletondata object, then adds it to the dictionary
 	public static void LoadSpine(string name, string jsonPath){
 		if(!DoesContainSkeleton(name)){
-			FileInfo info = new FileInfo("assets/resources/" + jsonPath + Futile.resourceSuffix + ".txt");
-		    if(info == null || info.Exists == false){
+			
+			TextAsset dataAsset = Resources.Load(jsonPath + Futile.resourceSuffix, typeof(TextAsset)) as TextAsset;
+			if(dataAsset == null){
 				Debug.Log("Could not load Skeleton, file " + jsonPath + Futile.resourceSuffix + " not found.");
-				return;
+				return;	
 			}
 			
 			SkeletonJson json = new SkeletonJson(_attachmentLoader);
-			SkeletonData skeletonData = json.ReadSkeletonData("assets/resources/" + jsonPath + Futile.resourceSuffix + ".txt");
+			TextReader reader = new StringReader(dataAsset.text);
+			SkeletonData skeletonData = json.ReadSkeletonData(reader);
+			
 			if(skeletonData != null){
 				_skeletons.Add(name, skeletonData);
 			}else{
