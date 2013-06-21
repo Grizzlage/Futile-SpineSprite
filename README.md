@@ -1,7 +1,7 @@
 Futile-SpineSprite
 ==================
 
-- A sprite system and manager built ontop of the official spine-runtime that allows you to load/play exported Spine skeletons and animations with Futile, a 2D framework for Unity 3D.
+- A sprite system and manager built ontop of the official spine-runtime that allows you to load/play exported Spine skeletons and animations with the Futile framework for Unity.
 
 - This is very much a work in progress. There's lots of room to improve, expand and optimize.
 
@@ -15,12 +15,12 @@ Demo
 - Launch Futile-SpineSprite/Assets/Scenes/Example.unity
 
 
-Setting up your project with SpineSprite
-========================================
+Setting up your project
+=======================
 - Put the SpineSprite folder into your Unity projects Plugin folder.
  
-How to use SpineSprite
-======================
+How to use
+==========
 
 Example
 -------
@@ -36,8 +36,8 @@ Loading Spine Data
         GSpineManager.LoadSpine("skeletonName", "pathToSpineJson", "pathToImageAtlas");
         GSpineManager.LoadSpine("skeletonName", "pathToSpineJson");
 
-- Both pathToSpineJson and pathToImageAtlas are relative to the /Resources/ folder.  
-- The image atlas needs to be loaded before any skeleton Json data is loaded.
+- Both pathToSpineJson and pathToImageAtlas are relative to the /Assets/Resources/ folder.  
+- The image atlas needs to be loaded before any skeleton Json data is loaded, or at the same time.
 - skeletonName can be anything you wish and will be used to lookup skeleton data.
 
 
@@ -64,14 +64,14 @@ Animation Controls
 
 Color Controls
 --------------
-- The entire sprite can be colored as a whole or by specific slots. (alpha is supported but can cause some blending artifcats with overlaping joints.)
+- The entire sprite can be colored as a whole or by specific slots. (alpha is supported but can cause blending artifcats with overlaping joints.)
 
         sprite.color = Color.white;
         sprite.FindSlotByName("slotName").color = Color.red;
 
 Everything else
 ---------------
-- GSpineSprite is extended from FContainer, so position, rotation, scale, alpha etc is all natively supported.
+- GSpineSprite is extended from FContainer, position, rotation, scale, alpha etc are all supported.
 
 - You can flip the animation horizontally or vertically via...
 
@@ -86,14 +86,13 @@ Everything else
 
 Tips
 ====
-- The GSpineSprite position is the location of the root bone of the skeleton.
-- If you're using image assets with subfolders for your skins in the Spine editor, it'll save attachment names with the subfolder name embeded in it. (For example, "goblin/head.png" or "goblingirl/head.png")
-- When building your atlas in Texture Packer, use a smart folder with the same subfolder structure as the Skin. This will then publish to a matching element name.
-- These atlas elements will still import into the Futil AtlasManager, and will retain the proper path as their name. (For example, "goblin/head" or "goblingirl/head")
+- The sprite position is the location of the root bone of the skeleton.
+- If you're using image assets with subfolders for your skins in the Spine editor, attachment names will retain the subfolder path. (For example, "goblin/head.png" or "goblingirl/head.png")
+- If you build your texture atlas in Texture Packer using smart folders with the same subfolder structure as the Spine skin. The resulting published atlas will embed the folder paths to the element name, matching the Spine editor names.
 
 TODOs
 ======
-- Allow attachments to be created at runtime with any FSprite/FAtlasElement and then bound to a slot
+- Allow attachments to be created and bound to slots at runtime with any FSprite/FAtlasElement
 - Once bounding box support is added to the editor, add support in the SpineSprite class (Spine Editor roadmap can be seen here https://trello.com/board/spine-editor/5131e9578f174c521c0059d9)
 
 Credit
@@ -101,7 +100,3 @@ Credit
 - Futile, by Matt Rix, https://github.com/MattRix/Futile
 - Spine, by Esoteric Software, http://esotericsoftware.com/
 - C# Spine-Runtime, by Esoteric Software, https://github.com/EsotericSoftware/spine-runtimes
-
-
-
-
