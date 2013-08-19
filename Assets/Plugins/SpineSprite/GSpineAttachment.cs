@@ -40,7 +40,7 @@ public class GSpineAttachment : FSprite {
 	public void Update(Slot slot){
 		_attachment = slot.Attachment as RegionAttachment;
 		_attachment.UpdateVertices(slot.Bone);
-		_element = _attachment.Texture as FAtlasElement;
+		element = _attachment.Texture as FAtlasElement;
 		
 		base.color = _slotCustomColor * new Color(slot.R, slot.G, slot.B, slot.A);
 		
