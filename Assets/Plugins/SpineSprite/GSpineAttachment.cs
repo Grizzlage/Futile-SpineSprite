@@ -26,7 +26,7 @@ public class GSpineAttachment : FSprite {
 	}
 	
 	// this is the runtime tint color to mix with the attachment color.
-	private Color _slotCustomColor = Color.white;
+	private Color _slotCustomColor = Futile.white;
 	override public Color color {
 		get {
 			return _slotCustomColor;	
