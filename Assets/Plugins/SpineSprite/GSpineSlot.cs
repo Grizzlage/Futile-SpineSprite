@@ -23,7 +23,7 @@ public class GSpineSlot : FContainer {
 	}
 	
 	// the color to apply to the attachment on this slot.
-	private Color _color = Color.white;
+	private Color _color = Futile.white;
 	public Color color {
 		get {
 			return _color;	
