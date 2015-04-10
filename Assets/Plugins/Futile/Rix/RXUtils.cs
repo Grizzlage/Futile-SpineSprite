@@ -5,6 +5,15 @@ using System.Collections.Generic;
 
 public static class RXUtils
 {
+	public static float GetAngle(this Vector2 vector)
+	{
+		return Mathf.Atan2(-vector.y, vector.x) * RXMath.RTOD;
+	}
+
+	public static float GetRadians(this Vector2 vector)
+	{
+		return Mathf.Atan2(-vector.y, vector.x);
+	}
 	public static Rect ExpandRect(Rect rect, float paddingX, float paddingY)
 	{
 		return new Rect(rect.x - paddingX, rect.y - paddingY, rect.width + paddingX*2, rect.height+paddingY*2);	
@@ -59,21 +68,6 @@ public static class RXUtils
 		return "("+vector.x + "," + vector.y +")";
 	}
 	
-	public static Color GetColorFromHex(uint hex)
-	{
-		uint red = hex >> 16;
-		uint greenBlue = hex - (red<<16);
-		uint green = greenBlue >> 8;
-		uint blue = greenBlue - (green << 8);
-		
-		return new Color(red/255.0f, green/255.0f, blue/255.0f);
-	}
-	
-	public static Color GetColorFromHex(string hexString)
-	{
-		return GetColorFromHex(Convert.ToUInt32(hexString,16));
-	}
-	
 	public static Vector2 GetVector2FromString(string input)
 	{
 		string[] parts = input.Split(new char[] {','});	
@@ -100,15 +94,6 @@ public class RXColorHSL
 
 public class RXColor
 {
-	public const float HUE_RED = 0.0f;
-	public const float HUE_ORANGE = 0.1f;
-	public const float HUE_YELLOW = 0.16f;
-	public const float HUE_GREEN = 0.25f;
-	public const float HUE_CYAN = 0.5f;
-	public const float HUE_BLUE = 0.6f;
-	public const float HUE_PURPLE = 0.8f;
-	public const float HUE_PINK = 0.9f;
-	
 	//TODO: IMPLEMENT THIS
 	public static Color ColorFromRGBString(string rgbString)
 	{
@@ -250,6 +235,12 @@ public class RXColor
 		
 		return new Color(red/255.0f, green/255.0f, blue/255.0f);
 	}
+
+	public static Color GetColorFromHex(string hexString)
+	{
+		return GetColorFromHex(Convert.ToUInt32(hexString,16));
+	}
+
 }
 
 public class RXMath
@@ -350,7 +341,7 @@ public static class RXRandom
 	public static int Range(int low, int high)
 	{
 		int delta = high - low;
-		if(delta == 0) return 0;
+		if(delta == 0) return low;
 		return low + _randomSource.Next() % delta; 
 	}
 	
@@ -359,7 +350,7 @@ public static class RXRandom
 		return _randomSource.NextDouble() < 0.5;	
 	}
 
-	//random item from all passed arguments/params - RXRandom.Select(one, two three);
+	//random item from all passed arguments/params - RXRandom.Select(one, two, three);
 	public static object Select(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
@@ -438,23 +429,62 @@ public class RXCircle
 //This class is incomplete, I just have to get around to converting all the equations to this simplified format
 public static class RXEase
 {
-	//based on these: http://www.robertpenner.com/easing/ but simplified to work with only normalized values (0..1)
+	//based on GoKit's easing equations: https://github.com/prime31/GoKit/tree/master/Assets/Plugins/GoKit/easing
+	//but simplified to work with only normalized values (0..1)
 	//t = current time, b = starting value, c = final value, d = duration
 	//for our purposes, t = input, b = 0, d = 1, c = 1 :::: note that (t/d = input)
+
+	public static float QuadOut(float input)
+	{
+		return -input * (input - 2.0f);
+	}
+
+	public static float QuadIn(float input)
+	{
+		return input * input;
+	}
+
+	public static float QuadInOut(float input)
+	{
+		if (input < 0.5f) return 2.0f * input * input;
+		input = (input-0.5f) * 2.0f;
+		return 0.5f - 0.5f * input * (input - 2.0f);
+	}
 
 	public static float ExpoOut(float input)
 	{
 		return -Mathf.Pow( 2.0f, -10.0f * input) + 1.0f;
 	}
-	
-	public static float BackOut(float input)
+
+	public static float ExpoIn(float input)
 	{
-		return BackOut(input, 1.7f);
+		return Mathf.Pow(2.0f,10.0f * (input - 1.0f));
 	}
 
+	public static float ExpoInOut(float input)
+	{
+		if (input < 0.5f) return Mathf.Pow(2.0f,10.0f * (input*2.0f - 1.0f)) * 0.5f;
+		else return 0.5f + (-Mathf.Pow( 2.0f, -20.0f * (input-0.5f)) + 1.0f) * 0.5f;
+	}
+	
+	public static float BackOut(float input) {return BackOut(input,1.7f);}
 	public static float BackOut(float input, float backAmount)
 	{
-		return ( input * input * ( (backAmount + 1.0f ) * input + backAmount ) + 1 ); //easing back
+		input = input - 1.0f;
+		return (input * input * ((backAmount + 1) * input + backAmount) + 1);
+	}
+
+	public static float BackIn(float input) {return BackIn(input,1.7f);}
+	public static float BackIn(float input, float backAmount)
+	{
+		return  input * input * ((backAmount + 1.0f) * input - backAmount);
+	}
+
+	public static float BackInOut(float input) {return BackInOut(input,1.7f);}
+	public static float BackInOut(float input, float backAmount)
+	{
+		if (input < 0.5f) return BackIn(input*2.0f,backAmount)*0.5f;
+		else return 0.5f + BackOut((input-0.5f)*2.0f,backAmount)*0.5f;
 	}
 
 	public static float SinInOut(float input)
@@ -463,12 +493,4 @@ public static class RXEase
 	}
 }
 
-//public static class ArrayExtensions
-//{
-//	public static string toJson( this Array obj )
-//	{
-//		return MiniJSON.jsonEncode( obj );
-//	}
-//	
-//}
 

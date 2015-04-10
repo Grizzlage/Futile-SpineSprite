@@ -7,11 +7,10 @@ public class GSpineSprite : FContainer {
 
 	public Skeleton skeleton;
 	public Spine.AnimationState animation;
-	
+
 	public List<GSpineSlot> slots = new List<GSpineSlot>();
 	
 	private bool _isSpineDirty = false;
-	
 	
 	// construct a new sprite with the spine skeleton name
 	public GSpineSprite(string name){
@@ -122,14 +121,14 @@ public class GSpineSprite : FContainer {
 	// play the animation name, and if it should loop or not
 	public void Play(string name, bool loop = true){
 		if(DoesContainAnimation(name)){
-			animation.SetAnimation(name, loop);
+			animation.SetAnimation(0, name, loop);
 		}
 	}
 	
 	// add the animation to the queue
 	public void Queue(string name, bool loop = true, float delay = 0.0f){
 		if(DoesContainAnimation(name)){
-			animation.AddAnimation(name, loop, delay);
+			animation.AddAnimation(0, name, loop, delay);
 		}
 	}
 	
@@ -152,14 +151,26 @@ public class GSpineSprite : FContainer {
 	
 	// stop the current animation and reset to the base pose
 	public void Stop(){
-		animation.ClearAnimation();
-		skeleton.SetToBindPose();
+
+		animation.ClearTracks();
+		skeleton.SetToSetupPose();
+
 		_isSpineDirty = true;
 	}
 	
 	// returns if the current animation is completed or not, this will return true for looped animations if the time has passed the duration of 1 single complete play.
 	public bool IsComplete(){
-		return animation.IsComplete();
+		TrackEntry track = animation.GetCurrent(0);
+		if(track != null){
+
+			// time is more then the end time but looping is set to false
+			// ** with looping set to true time can be larger then end time.
+			if(track.time >= track.EndTime && !track.loop){
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	
@@ -180,7 +191,9 @@ public class GSpineSprite : FContainer {
 	public void SetSkin(string skin){
 		if(DoesContainSkin(skin)){
 			skeleton.SetSkin(skin);
-			skeleton.SetSlotsToBindPose(); 
+
+			skeleton.SetToSetupPose();
+
 			_isSpineDirty = true;
 		}
 	}
@@ -200,12 +213,18 @@ public class GSpineSprite : FContainer {
 	
 	// updates the sprite / skeleton
 	public void Update(){
-		
+
+		TrackEntry track = animation.GetCurrent(0);
+
 		// is the animation currently playing? then update the bone positions and slot data
-		if(!animation.IsComplete() || animation.Loop){
-			animation.Update(Time.deltaTime * animationTimeScale);
-			animation.Apply(skeleton);
-			_isSpineDirty = true;
+
+		if(track != null){
+			// only update if were looping, or if or time is less then the end time for non looping tracks.
+			if(track.loop || (!track.loop && track.time <= track.EndTime)){
+				animation.Update(Time.deltaTime * animationTimeScale);
+				animation.Apply(skeleton);
+				_isSpineDirty = true;
+			}
 		}
 		
 		// if the skeleton is dirty then refresh all the slots.

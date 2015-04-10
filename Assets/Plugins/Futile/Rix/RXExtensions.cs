@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Text;
 //
 //public static class EventExtensions
 //{
 //    
 //}
 
-public static class ColorExtensions
+public static class RXColorExtensions
 {
 	public static Color CloneWithNewAlpha(this Color color, float alpha)
 	{
@@ -28,7 +29,7 @@ public static class ColorExtensions
 	}
 }
 
-public static class RectExtensions
+public static class RXRectExtensions
 {
 	public static Rect CloneWithExpansion(this Rect rect, float expansionAmount)
 	{
@@ -45,6 +46,24 @@ public static class RectExtensions
 			rect.yMin <= otherRect.yMax
 		);
 	}
+
+    //this can handle rects with negative width and negative height
+    public static bool CheckIntersectComplex(this Rect rect, Rect otherRect)
+    {
+        float rx = rect.x;
+        float ry = rect.y;
+
+        float orx = otherRect.x;
+        float ory = otherRect.y;
+        
+        return 
+        (
+            Mathf.Max(rx, rx + rect.width) >= Mathf.Min(orx, orx + otherRect.width) && 
+            Mathf.Min(rx, rx + rect.width) <= Mathf.Max(orx, orx + otherRect.width) && 
+            Mathf.Max(ry, ry + rect.height) >= Mathf.Max(ory, ory + otherRect.height) && 
+            Mathf.Min(ry, ry + rect.height) <= Mathf.Min(ory, ory + otherRect.height)
+        );
+    }
 	
 	public static Rect CloneAndMultiply(this Rect rect, float multiplier)
 	{
@@ -124,7 +143,7 @@ public static class RectExtensions
 	}
 }
 
-public static class GoKitExtensions
+public static class RXGoKitExtensions
 {
 	//this makes it so we don't have to specify false for isRelative every.single.time.
 	public static TweenConfig floatProp(this TweenConfig config, string propName, float propValue)
@@ -144,7 +163,7 @@ public static class GoKitExtensions
 	}
 }
 
-public static class ArrayExtensions
+public static class RXArrayExtensions
 {
 	public static void RemoveItem<T>(this T[] items, T itemToRemove, ref int count) where T : class
 	{
@@ -167,10 +186,61 @@ public static class ArrayExtensions
 		if(wasFound) count--;
 	}
 
+	public static void Log<T>(this T[] items) {items.Log("");}
+	public static void Log<T>(this T[] items, string name)
+	{
+		StringBuilder builder = new StringBuilder();
+
+		if(name != "")
+		{
+			builder.Append(name);
+			builder.Append(": ");
+		}
+
+		builder.Append('[');
+
+		int count = items.Length;
+
+		for(int t = 0;t<count;t++)
+		{
+			builder.Append(items[t].ToString());
+			if(t < count-1) builder.Append(',');
+		}
+
+		builder.Append(']');
+
+		Debug.Log(builder.ToString());
+	}
 }
 
-public static class ListExtensions
+public static class RXListExtensions
 {
+	public static void Log<T>(this List<T> list) {list.Log("");}
+	public static void Log<T>(this List<T> list, string name)
+	{
+		StringBuilder builder = new StringBuilder();
+
+		if(name != "")
+		{
+			builder.Append(name);
+			builder.Append(": ");
+		}
+
+		builder.Append('[');
+
+		int count = list.Count;
+
+		for(int t = 0;t<count;t++)
+		{
+			builder.Append(list[t].ToString());
+			if(t < count-1) builder.Append(',');
+		}
+
+		builder.Append(']');
+
+		Debug.Log(builder.ToString());
+	}
+
 	public static T Unshift<T>(this List<T> list)
 	{
 		T thing = list[0];

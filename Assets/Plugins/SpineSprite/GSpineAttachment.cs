@@ -8,6 +8,8 @@ public class GSpineAttachment : FSprite {
 	
 	// the spine attachment 
 	private RegionAttachment _attachment;
+
+	float[] vertices = new float[8];
 	
 	// the name of the attachment
 	public string name {
@@ -21,7 +23,7 @@ public class GSpineAttachment : FSprite {
 	}
 	
 	// constructor that uses a slot to build the attachment
-	public GSpineAttachment(Slot slot) : base((slot.Attachment as RegionAttachment).Texture as FAtlasElement){
+	public GSpineAttachment(Slot slot) : base((slot.Attachment as RegionAttachment).RendererObject as FAtlasElement){
 		Update(slot);
 	}
 	
@@ -39,8 +41,14 @@ public class GSpineAttachment : FSprite {
 	// update the attachment with the current slot data
 	public void Update(Slot slot){
 		_attachment = slot.Attachment as RegionAttachment;
-		_attachment.UpdateVertices(slot.Bone);
-		element = _attachment.Texture as FAtlasElement;
+
+		//_attachment.UpdateOffset();
+		//_attachment.UpdateVertices(slot.Bone);
+
+		_attachment.ComputeWorldVertices(slot.Bone, vertices);
+
+		element = _attachment.RendererObject as FAtlasElement;
+		element = null;
 		
 		base.color = _slotCustomColor * new Color(slot.R, slot.G, slot.B, slot.A);
 		
@@ -53,10 +61,12 @@ public class GSpineAttachment : FSprite {
 		
 		// bind the verticies from the spine attachment to the fsprite verticies
 		if(_attachment != null){
-			_localVertices[0].Set(_attachment.Vertices[RegionAttachment.X2], _attachment.Vertices[RegionAttachment.Y2]);
-			_localVertices[1].Set(_attachment.Vertices[RegionAttachment.X3], _attachment.Vertices[RegionAttachment.Y3]);
-			_localVertices[2].Set(_attachment.Vertices[RegionAttachment.X4], _attachment.Vertices[RegionAttachment.Y4]);
-			_localVertices[3].Set(_attachment.Vertices[RegionAttachment.X1], _attachment.Vertices[RegionAttachment.Y1]);
+
+
+			_localVertices[0].Set(vertices[RegionAttachment.X2], vertices[RegionAttachment.Y2]);
+			_localVertices[1].Set(vertices[RegionAttachment.X3], vertices[RegionAttachment.Y3]);
+			_localVertices[2].Set(vertices[RegionAttachment.X4], vertices[RegionAttachment.Y4]);
+			_localVertices[3].Set(vertices[RegionAttachment.X1], vertices[RegionAttachment.Y1]);
 		}
 	}
 }

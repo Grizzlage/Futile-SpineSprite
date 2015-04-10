@@ -33,7 +33,7 @@ public class FKerningInfo
 	public float amount;
 }
 
-public class FLetterQuad
+public struct FLetterQuad
 {
 	public FCharInfo charInfo;
 	public Rect rect;
@@ -120,7 +120,7 @@ public class FTextParams
 	}
 }
 
-public class FLetterQuadLine
+public struct FLetterQuadLine
 {
 	public Rect bounds;
 	public int letterCount;
@@ -163,8 +163,8 @@ public class FFont
 		_element = element;
 		_configPath = configPath;
 		_textParams = textParams;
-		_offsetX = offsetX;
-		_offsetY = offsetY;
+		_offsetX = offsetX * Futile.displayScale / Futile.resourceScale;
+		_offsetY = offsetY * Futile.displayScale / Futile.resourceScale;
 		
 		LoadAndParseConfigFile();
 	}
@@ -210,10 +210,12 @@ public class FFont
 		FCharInfo emptyChar = new FCharInfo();
 		_charInfosByID[0] = emptyChar;
 		
-		float resourceScale = Futile.resourceScale;
+		float resourceScaleInverse = Futile.resourceScaleInverse;
 		
 		Vector2 textureSize = _element.atlas.textureSize;
-		
+
+		Debug.Log("texture width " + textureSize.x);
+
 		bool wasKerningFound = false;
 		
 		int lineCount = lines.Length;
@@ -242,9 +244,9 @@ public class FFont
 				//_configHeight = int.Parse(words[4].Split('=')[1]);
 				
 				//this is the ratio of the config vs the size of the actual texture element
-				_configRatio = _element.sourceSize.x/_configWidth;
-				
-				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;	
+				_configRatio = _element.sourcePixelSize.x / (float)_configWidth;
+
+				_lineHeight = ((float)int.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
 				//_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
 			}
 			else if(words[0] == "chars") //chars count=92
@@ -274,60 +276,68 @@ public class FFont
 					
 					if(partName == "\r") continue; //something weird happened with linebreaks, meh!
 					
-					int partValue = int.Parse(parts[1]);
+					int partIntValue = int.Parse(parts[1]);
+					float partFloatValue = (float) partIntValue;
 						
 					if(partName == "id")
 					{
-						charInfo.charID = partValue;
+						charInfo.charID = partIntValue;
 					}
 					else if(partName == "x")
 					{
-						charInfo.x = partValue*_configRatio - _element.sourceRect.x; //offset to account for the trimmed atlas
+						charInfo.x = partFloatValue * _configRatio - _element.sourceRect.x*Futile.resourceScale; //offset to account for the trimmed atlas
 					}
 					else if(partName == "y")
 					{
-						charInfo.y = partValue*_configRatio - _element.sourceRect.y; //offset to account for the trimmed atlas
+						charInfo.y = partFloatValue * _configRatio - _element.sourceRect.y*Futile.resourceScale; //offset to account for the trimmed atlas
 					}
 					else if(partName == "width")
 					{
-						charInfo.width = partValue*_configRatio;
+						charInfo.width = partFloatValue*_configRatio;
 					}
 					else if(partName == "height")
 					{
-						charInfo.height = partValue*_configRatio;
+						charInfo.height = partFloatValue*_configRatio;
 					}
 					else if(partName == "xoffset")
 					{
-						charInfo.offsetX = partValue*_configRatio;
+						charInfo.offsetX = partFloatValue*_configRatio;
 					}
 					else if(partName == "yoffset")
 					{
-						charInfo.offsetY = partValue*_configRatio;
+						charInfo.offsetY = partFloatValue*_configRatio;
 					}
 					else if(partName == "xadvance")
 					{
-						charInfo.xadvance = partValue*_configRatio;
+						charInfo.xadvance = partFloatValue*_configRatio;
 					}
 					else if(partName == "page")
 					{
-						charInfo.page = partValue;
+						charInfo.page = partIntValue;
 					}
 				}
 
 				Rect uvRect = new Rect 	
 				(
-					_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
-					(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
-					charInfo.width/textureSize.x*resourceScale,
-					charInfo.height/textureSize.y*resourceScale
+					_element.uvRect.x + charInfo.x/textureSize.x,
+					(textureSize.y-charInfo.y-charInfo.height)/textureSize.y - (1.0f - _element.uvRect.yMax),
+					charInfo.width/textureSize.x,
+					charInfo.height/textureSize.y
 				);
-			
+
 				charInfo.uvRect = uvRect;
 				
 				charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
 				charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
 				charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
 				charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+
+				//scale them AFTER they've been used for uvs
+				charInfo.width *= resourceScaleInverse;
+				charInfo.height *= resourceScaleInverse;
+				charInfo.offsetX *= resourceScaleInverse;
+				charInfo.offsetY *= resourceScaleInverse;
+				charInfo.xadvance *= resourceScaleInverse;
 
 				_charInfosByID[(uint)charInfo.charID] = charInfo;
 				_charInfos[c] = charInfo;
@@ -366,7 +376,7 @@ public class FFont
 						}
 						else if(partName == "amount")
 						{
-							kerningInfo.amount = partValue * _configRatio;
+							kerningInfo.amount = ((float)partValue) * _configRatio * resourceScaleInverse;
 						}
 					}
 				}
@@ -390,15 +400,15 @@ public class FFont
 		}
 		
 		//make sure the space character doesn't have offsetY and offsetX
-		if(_charInfosByID[32] != null)
+        if(_charInfosByID.ContainsKey(ASCII_SPACE))
 		{
-			_charInfosByID[32].offsetX = 0;
-			_charInfosByID[32].offsetY = 0;
+            _charInfosByID[ASCII_SPACE].offsetX = 0;
+            _charInfosByID[ASCII_SPACE].offsetY = 0;
 		}
 		
 	}
 	
-	public FLetterQuadLine[] GetQuadInfoForText(string text, FTextParams textParams)
+	public FLetterQuadLine[] GetQuadInfoForText(string text, FTextParams labelTextParams)
 	{
 		int lineCount = 0;
 		int letterCount = 0;
@@ -406,6 +416,7 @@ public class FFont
 		char[] letters = text.ToCharArray();
 		
 		//at some point these should probably be pooled and reused so we're not allocing new ones all the time
+		//now they're structs though, so it might not be an issue
 		FLetterQuadLine[] lines = new FLetterQuadLine[10];
 		
 		int lettersLength = letters.Length;
@@ -450,25 +461,32 @@ public class FFont
 		
 		char previousLetter = '\0';
 		
-		float minX = 100000;
-		float maxX = -100000;
-		float minY = 100000;
-		float maxY = -100000;
+		float minX = float.MaxValue;
+		float maxX = float.MinValue;
+		float minY = float.MaxValue;
+		float maxY = float.MinValue;
 		
-		float usableLineHeight = _lineHeight + textParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
-		
+		float usableLineHeight = _lineHeight + labelTextParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
+
 		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
 			
 			if(letter == ASCII_NEWLINE)
 			{	
-				lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+				if(letterCount == 0)
+				{
+					lines[lineCount].bounds = new Rect(0,0,nextY,nextY - usableLineHeight);
+				}
+				else 
+				{
+					lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+				}
 				
-				minX = 100000;
-				maxX = -100000;
-				minY = 100000;
-				maxY = -100000;
+				minX = float.MaxValue;
+				maxX = float.MinValue;
+				minY = float.MaxValue;
+				maxY = float.MinValue;
 				
 				nextX = 0;
 				nextY -= usableLineHeight;
@@ -502,9 +520,16 @@ public class FFont
 					charInfo = _charInfosByID[0];
 				}
 				
-				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _textParams.scaledKerningOffset;
+				float totalKern = foundKerning.amount + labelTextParams.scaledKerningOffset + _textParams.scaledKerningOffset;
 
-				nextX += totalKern; 
+				if(letterCount == 0)
+				{
+					nextX = -charInfo.offsetX; //don't offset the first character
+				}
+				else
+				{
+					nextX += totalKern; 
+				}
 				
 				letterQuad.charInfo = charInfo;
 				
@@ -514,17 +539,11 @@ public class FFont
 				
 				lines[lineCount].quads[letterCount] = letterQuad;	
 				
-				
-				
 				minX = Math.Min (minX, quadRect.xMin);
 				maxX = Math.Max (maxX, quadRect.xMax);
-				maxY = Math.Max (maxY, nextY);
-				
 				minY = Math.Min (minY, nextY - usableLineHeight);
+				maxY = Math.Max (maxY, nextY);
 
-//				minY = Math.Min (minY, quadRect.yMin);
-//				maxY = Math.Max (maxY, quadRect.yMax);
-				
 				nextX += charInfo.xadvance;
 
 				letterCount++;
@@ -533,9 +552,14 @@ public class FFont
 			previousLetter = letter; 
 		}
 		
-		
-		
-		lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+		if(letterCount == 0) //there were no letters, so minX and minY would be crazy if we used them
+		{
+			lines[lineCount].bounds = new Rect(0,0,nextY,nextY - usableLineHeight);
+		}
+		else 
+		{
+			lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+		}
 		
 		return lines;
 	}

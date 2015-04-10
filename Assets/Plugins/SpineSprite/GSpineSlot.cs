@@ -41,7 +41,7 @@ public class GSpineSlot : FContainer {
 		_slot = slot;
 		
 		// slot data has an attachment
-		if(_slot.Attachment != null){
+		if(_slot != null && _slot.Attachment != null){
 		
 			// we already have an attachment, make sure it's visible and update with new slot data.
 			if(_attachment != null){

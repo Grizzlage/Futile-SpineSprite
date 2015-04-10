@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class FSprite : FFacetNode
+public class FSprite : FFacetElementNode
 {
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;
@@ -14,8 +14,8 @@ public class FSprite : FFacetNode
 	protected float _anchorX = defaultAnchorX;
 	protected float _anchorY = defaultAnchorY;
 	
-	protected Rect _localRect;
-	protected Rect _textureRect;
+	protected Rect _localRect; //localRect is the TRIMMED rect
+	protected Rect _textureRect; //textureRect is the UN-TRIMMED rect
 
 	protected bool _isMeshDirty = false;
 	protected bool _areLocalVerticesDirty = false;
@@ -43,6 +43,7 @@ public class FSprite : FFacetNode
 	override public void HandleElementChanged()
 	{
 		_areLocalVerticesDirty = true;
+		UpdateLocalVertices();
 	}
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)

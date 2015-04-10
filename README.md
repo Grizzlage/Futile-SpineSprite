@@ -1,30 +1,29 @@
 Futile-SpineSprite
 ==================
 
-- A sprite system and manager built ontop of the official spine-runtime that allows you to load/play exported Spine skeletons and animations with the Futile framework for Unity.
-
-- This is very much a work in progress. There's lots of room to improve, expand and optimize.
+- This is a basic implementation of the Spine runtime for use with Futile inside Unity. It uses futiles sprite and atlas systems to load/play exported Spine skeletons and animations.
 
 Requirements
 ============
-- The generic C# Spine-Runtime by Esoteric Software, https://github.com/EsotericSoftware/spine-runtimes (/spine-csharp/src/ folder)
-- Futile by Matt Rix, https://github.com/MattRix/Futile (I've used the development-physics branch)
+- This has been upgraded to Unity 5.0+
+- I've currently only tested with exporting Spine data from Spine 2.1.27
+- I've used the lastest C# Spine-Runtime by Esoteric Software (master branch, as of April 10 2015), https://github.com/EsotericSoftware/spine-runtimes
+- The Futile framework by Matt Rix (master branch, as of April 10 2015), https://github.com/MattRix/Futile
 
-Demo
-====
-- Launch Futile-SpineSprite/Assets/Scenes/Example.unity
+** For ease of use, I've included both spine-runtime and futile snapshots in this package.
 
 
 Setting up your project
 =======================
 - Put the SpineSprite folder into your Unity projects Plugin folder.
+- Optional, Copy the Futile folder into your Plugin folder if you dont already have it in your project.
  
 How to use
 ==========
 
 Example
 -------
-        GSpineManager.LoadSpine("playerAvatar", "spine/player/playerJson", "spine/player/playerAtlas");
+        GSpineManager.LoadSpine("playerAvatar", "spine/player/player-spine-json", "spine/player/player-atlas");
         GSpineSprite sprite = new GSpineSprite("playerAvatar");
         Futile.stage.AddChild(sprite);
         
@@ -36,9 +35,9 @@ Loading Spine Data
         GSpineManager.LoadSpine("skeletonName", "pathToSpineJson", "pathToImageAtlas");
         GSpineManager.LoadSpine("skeletonName", "pathToSpineJson");
 
-- Both pathToSpineJson and pathToImageAtlas are relative to the /Assets/Resources/ folder.  
-- The image atlas needs to be loaded before any skeleton Json data is loaded, or at the same time.
-- skeletonName can be anything you wish and will be used to lookup skeleton data.
+- Your spine json and atlas image / json files all must be in the /Assets/Resources/ folder.  
+- The image atlas needs to be loaded before any skeleton Json data is loaded, or at the same time using the all in one function.
+- skeletonName is just a lookup name in the SpineManager can be anything you wish. It's only used for looking up spine/atlas data.
 
 
 Create the Sprite
@@ -77,26 +76,24 @@ Everything else
 
         sprite.flipX = true;
         sprite.flipY = true;
-		
+                
 
 - The 2 main spine-runtime classes are exposed via...
 
         sprite.skeleton; // the Spine.Skeleton class
         sprite.animation; // the Spine.AnimationState class
 
+Events
+------
+- Through sprite.animation you can access Spines delegates for calling code on Start / End / Event / Complete triggers. Please see the spine-runtime documentation for more details on using these.
+
 Tips
 ====
 - The sprite position is the location of the root bone of the skeleton.
 - If you're using image assets with subfolders for your skins in the Spine editor, attachment names will retain the subfolder path. (For example, "goblin/head.png" or "goblingirl/head.png")
-- If you build your texture atlas in Texture Packer using smart folders with the same subfolder structure as the Spine skin. The resulting published atlas will embed the folder paths to the element name, matching the Spine editor names.
+- In Texture Packer, use smart folders to copy the same subfolder structure as you have in Spine. The resulting published atlas will embed the folder paths to the element name, matching the Spine editor names.
 
-TODOs
-======
-- Allow attachments to be created and bound to slots at runtime with any FSprite/FAtlasElement
-- Once bounding box support is added to the editor, add support in the SpineSprite class (Spine Editor roadmap can be seen here https://trello.com/board/spine-editor/5131e9578f174c521c0059d9)
-
-Credit
-======
-- Futile, by Matt Rix, https://github.com/MattRix/Futile
-- Spine, by Esoteric Software, http://esotericsoftware.com/
-- C# Spine-Runtime, by Esoteric Software, https://github.com/EsotericSoftware/spine-runtimes
+Not Implementated or Supported
+==============================
+- You must use Texture Packer to pack your atlases, as Futile was designed to load and cache these files. Select Unity Json as the datatype. I haven't tried using an atlas packed from Spine itself, but I suspect that this most likely will have a different structure and not work.
+- Spines Mesh attachments, and the Free Form Deformation is not supported. Only basic image slots will work.

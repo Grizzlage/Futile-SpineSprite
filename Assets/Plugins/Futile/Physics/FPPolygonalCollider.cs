@@ -47,7 +47,7 @@ public class FPPolygonalCollider : MonoBehaviour
 			collider.convex = FPUtils.CheckIfConvex(_polygonalData.sourceVertices);
 		}
 		
-		collider.smoothSphereCollisions = _polygonalData.shouldUseSmoothSphereCollisions;	
+		//collider.smoothSphereCollisions = _polygonalData.shouldUseSmoothSphereCollisions;	
 		
 		return collider;
 	}
@@ -73,7 +73,7 @@ public class FPPolygonalCollider : MonoBehaviour
 	}
 }
 
-public class FPDebugPolygonColliderView : FFacetNode
+public class FPDebugPolygonColliderView : FFacetElementNode
 {
 	private FPPolygonalCollider _mesh2D;
 	private int _triangleCount; 

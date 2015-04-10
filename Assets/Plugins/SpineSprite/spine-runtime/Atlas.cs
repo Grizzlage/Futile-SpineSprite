@@ -1,30 +1,42 @@
-/*******************************************************************************
+/******************************************************************************
+ * Spine Runtimes Software License
+ * Version 2.1
+ * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * You are granted a perpetual, non-exclusive, non-sublicensable and
+ * non-transferable license to install, execute and perform the Spine Runtimes
+ * Software (the "Software") solely for internal use. Without the written
+ * permission of Esoteric Software (typically granted by licensing Spine), you
+ * may not (a) modify, translate, adapt or otherwise create derivative works,
+ * improvements of the Software or develop new applications using the Software
+ * or (b) remove, delete, alter or obscure any trademarks or any copyright,
+ * trademark, patent or other intellectual property or proprietary rights
+ * notices on or in the Software, including any copy thereof. Redistributions
+ * in binary or source form must include this license and terms.
  * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+
+#if WINDOWS_STOREAPP
+using System.Threading.Tasks;
+using Windows.Storage;
+#endif
 
 namespace Spine {
 	public class Atlas {
@@ -32,8 +44,11 @@ namespace Spine {
 		List<AtlasRegion> regions = new List<AtlasRegion>();
 		TextureLoader textureLoader;
 
-		public Atlas (String path, TextureLoader textureLoader) {
-			using (StreamReader reader = new StreamReader(path)) {
+#if WINDOWS_STOREAPP
+		private async Task ReadFile(string path, TextureLoader textureLoader) {
+			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+			var file = await folder.GetFileAsync(path).AsTask().ConfigureAwait(false);
+			using (var reader = new StreamReader(await file.OpenStreamForReadAsync().ConfigureAwait(false))) {
 				try {
 					Load(reader, Path.GetDirectoryName(path), textureLoader);
 				} catch (Exception ex) {
@@ -42,8 +57,36 @@ namespace Spine {
 			}
 		}
 
+		public Atlas(String path, TextureLoader textureLoader) {
+			this.ReadFile(path, textureLoader).Wait();
+		}
+#else
+		public Atlas (String path, TextureLoader textureLoader) {
+
+#if WINDOWS_PHONE
+            Stream stream = Microsoft.Xna.Framework.TitleContainer.OpenStream(path);
+            using (StreamReader reader = new StreamReader(stream))
+            {
+#else
+            using (StreamReader reader = new StreamReader(path)) {
+#endif
+				try {
+					Load(reader, Path.GetDirectoryName(path), textureLoader);
+				} catch (Exception ex) {
+					throw new Exception("Error reading atlas file: " + path, ex);
+				}
+			}
+		}
+#endif
+
 		public Atlas (TextReader reader, String dir, TextureLoader textureLoader) {
 			Load(reader, dir, textureLoader);
+		}
+
+		public Atlas (List<AtlasPage> pages, List<AtlasRegion> regions) {
+			this.pages = pages;
+			this.regions = regions;
+			this.textureLoader = null;
 		}
 
 		private void Load (TextReader reader, String imagesDir, TextureLoader textureLoader) {
@@ -61,11 +104,16 @@ namespace Spine {
 					page = new AtlasPage();
 					page.name = line;
 
-					page.format = (Format)Enum.Parse(typeof(Format), readValue(reader), false);
+					if (readTuple(reader, tuple) == 2) { // size is only optional for an atlas packed with an old TexturePacker.
+						page.width = int.Parse(tuple[0]);
+						page.height = int.Parse(tuple[1]);
+						readTuple(reader, tuple);
+					}
+					page.format = (Format)Enum.Parse(typeof(Format), tuple[0], false);
 
 					readTuple(reader, tuple);
-					page.minFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[0]);
-					page.magFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[1]);
+					page.minFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[0], false);
+					page.magFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[1], false);
 
 					String direction = readValue(reader);
 					page.uWrap = TextureWrap.ClampToEdge;
@@ -143,7 +191,7 @@ namespace Spine {
 			return line.Substring(colon + 1).Trim();
 		}
 
-		/** Returns the number of tuple values read (2 or 4). */
+		/// <summary>Returns the number of tuple values read (1, 2 or 4).</summary>
 		static int readTuple (TextReader reader, String[] tuple) {
 			String line = reader.ReadLine();
 			int colon = line.IndexOf(':');
@@ -151,10 +199,7 @@ namespace Spine {
 			int i = 0, lastMatch = colon + 1;
 			for (; i < 3; i++) {
 				int comma = line.IndexOf(',', lastMatch);
-				if (comma == -1) {
-					if (i == 0) throw new Exception("Invalid line: " + line);
-					break;
-				}
+				if (comma == -1) break;
 				tuple[i] = line.Substring(lastMatch, comma - lastMatch).Trim();
 				lastMatch = comma + 1;
 			}
@@ -162,9 +207,17 @@ namespace Spine {
 			return i + 1;
 		}
 
-		/** Returns the first region found with the specified name. This method uses string comparison to find the region, so the result
-		 * should be cached rather than calling this method multiple times.
-		 * @return The region, or null. */
+		public void FlipV () {
+			for (int i = 0, n = regions.Count; i < n; i++) {
+				AtlasRegion region = regions[i];
+				region.v = 1 - region.v;
+				region.v2 = 1 - region.v2;
+			}
+		}
+
+		/// <summary>Returns the first region found with the specified name. This method uses string comparison to find the region, so the result
+		/// should be cached rather than calling this method multiple times.</summary>
+		/// <returns>The region, or null.</returns>
 		public AtlasRegion FindRegion (String name) {
 			for (int i = 0, n = regions.Count; i < n; i++)
 				if (regions[i].name == name) return regions[i];
@@ -172,8 +225,9 @@ namespace Spine {
 		}
 
 		public void Dispose () {
+			if (textureLoader == null) return;
 			for (int i = 0, n = pages.Count; i < n; i++)
-				textureLoader.Unload(pages[i].texture);
+				textureLoader.Unload(pages[i].rendererObject);
 		}
 	}
 
@@ -210,7 +264,7 @@ namespace Spine {
 		public TextureFilter magFilter;
 		public TextureWrap uWrap;
 		public TextureWrap vWrap;
-		public Object texture;
+		public Object rendererObject;
 		public int width, height;
 	}
 
